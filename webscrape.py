@@ -2,14 +2,17 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from docx import Document
+import time
 
 # URL of the webpage to scrape
-urls = ["https://www.novelcool.com/chapter/Damn-Reincarnation-Chapter-82/8690734/"]
-
+urls = ["https://www.novelcool.com/chapter/Damn-Reincarnation-Chapter-80/8690732/"]
+counter = 0 
 while len(urls) > 0:
 # Send an HTTP GET request to the URL
+    counter += 1
+    
     response = requests.get(urls[0])
-
+    time.sleep(10)
     if response.status_code == 200:
         # Parse the HTML content of the page
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -28,11 +31,11 @@ while len(urls) > 0:
             doc.add_paragraph(p_tag.get_text())
 
         # Specify the full path to the output file in the destination folder
-        output_file = os.path.join(destination_folder, "output82b.docx")
+        output_file = os.path.join(destination_folder, f"output-{counter}.docx")
 
         # Save the document to the specified folder and file
         doc.save(output_file)
-        print(f"Word document saved in '{output_file}'")
+        print(f"Word document saved in chapter'{output_file}'")
     
     #find the url for next chap
         div_element = soup.find('div', class_='dis-hide', id='next_chp_url')
