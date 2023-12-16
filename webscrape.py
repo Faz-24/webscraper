@@ -5,37 +5,40 @@ from docx import Document
 import time
 
 # URL of the webpage to scrape
-urls = ["https://www.novelcool.com/chapter/Damn-Reincarnation-Chapter-80/8690732/"]
-counter = 0 
+urls = ["https://www.novelcool.com/chapter/Damn-Reincarnation-Chapter-325/11426653/"]
+counter = 324 
 while len(urls) > 0:
 # Send an HTTP GET request to the URL
     counter += 1
     
     response = requests.get(urls[0])
-    time.sleep(10)
+    time.sleep(5)
     if response.status_code == 200:
         # Parse the HTML content of the page
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Find all the <p> tags on the page
-        p_tags = soup.find_all('p')
+        # Find all the <relevant div tags> tags on the page that contain the p tags
+        div_tags = soup.find('div', {'class': 'overflow-hidden'})
+
+        if div_tags:
+            p_tag = div_tags.get_text(separator="\n \n")
+            #p_tags = div_tags.find('p')                  
+            #p_tag = p_tags.get_text(separator="\n")
 
         # Specify the destination folder path
         destination_folder = "/Users/f.shahriyar/Documents"
 
         # Create a new Word document
         doc = Document()
-
-        # Add the text content of each <p> tag to the document
-        for p_tag in p_tags:
-            doc.add_paragraph(p_tag.get_text())
-
+        doc.add_paragraph(p_tag)
+        doc.add_paragraph("fahim")
         # Specify the full path to the output file in the destination folder
         output_file = os.path.join(destination_folder, f"output-{counter}.docx")
 
         # Save the document to the specified folder and file
         doc.save(output_file)
         print(f"Word document saved in chapter'{output_file}'")
+        #print(p_tag)
     
     #find the url for next chap
         div_element = soup.find('div', class_='dis-hide', id='next_chp_url')
